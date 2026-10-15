@@ -2,11 +2,15 @@
 /* Study: the ring (/study/) and the notes (/study/<slug>/).                   */
 /*                                                                            */
 /* The ring is an SVG drawn by assets/js/study-ring.js in the site's own      */
-/* marks: 1px ink lines, one monospace, grey for what steps back. The index   */
-/* and a note's connections are drawn like `tree` on the figure grid (--fig:  */
-/* Server Mono, then Study Mono Fill for the Greek, maths and arrows it      */
-/* lacks); at a line height of 1.25 Server Mono's box glyphs meet.           */
+/* marks: 1px ink lines, one monospace, grey for what steps back. Around it   */
+/* only a title, two status lines and the index: plain lists per subject.    */
+/* Hand-drawn figures use --fig: Server Mono, then Study Mono Fill for the   */
+/* Greek, maths and arrows it lacks, on one grid.                            */
 /* ========================================================================== */
+
+/* Korean words set in the monospace stack sit a 0.63em space apart, far
+   wider than a Korean word space: labels made of words tighten it. */
+$word-tight: -0.32em;
 
 /* Link ink by how far a link travels: same subject, same area, another area
    on the same side, between the owner's fields and the others. */
@@ -31,94 +35,50 @@
   small { font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--mute); margin-left: 10px; }
 }
 
-/* ---- the study page: an atlas spread, wider than an article ---- */
-$ring-wide: 960px;
-.page-study .wrap { max-width: 1180px; }
+/* ---- the study page: a title, two status lines, the ring ---- */
+.page-study .wrap { max-width: 880px; }
 
-.ring-stage {
-  display: grid;
-  grid-template-columns: 300px minmax(0, 1fr);
-  column-gap: 44px;
-  @media (max-width: $ring-wide) {
-    display: flex;
-    flex-direction: column;
-  }
+.ring-head { text-align: center; padding-top: 32px; }
+.study-title {
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  @media (max-width: $bp-mobile) { font-size: 32px; }
 }
-.ring-side { min-width: 0; display: flex; flex-direction: column; padding-bottom: 8px; }
-.ringmap { position: relative; min-width: 0; padding-top: 28px; }
+/* Two lines of fixed height under the title: counts and a hint at rest,
+   the note, thread or field under the pointer otherwise. The ring below
+   never moves. */
+.ring-status { height: 4.6em; margin-top: 14px; }
+.ring-info {
+  max-width: 640px;
+  margin: 0 auto;
+  .l1 { display: flex; justify-content: center; gap: 0 12px; font-size: 16px; white-space: nowrap; overflow: hidden; word-spacing: $word-tight; }
+  .l1 b { font-weight: 700; overflow: hidden; text-overflow: ellipsis; }
+  .l1 .m { color: var(--mute); }
+  .l2 {
+    margin-top: 2px;
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--mute);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .go, .x { display: none; }
+}
+.ringmap { position: relative; min-width: 0; padding-top: 8px; }
 .ring-svg { display: block; width: 100%; height: auto; overflow: visible; -webkit-tap-highlight-color: transparent; }
 .ring-measure { position: absolute; left: -9999px; top: 0; width: 10px; height: 10px; visibility: hidden; }
 
-.study-lede {
-  margin-top: 16px;
-  max-width: 62ch;
-  font-size: 14px;
-  line-height: 1.75;
-  em { font-style: normal; background: var(--fg); color: var(--bg); padding: 0 3px; }
-  p + p { margin-top: 10px; }
-}
-
-/* legend, drawn with the ring's own marks */
-.ring-legend {
-  margin-top: 20px;
-  display: grid;
-  grid-template-columns: 40px 1fr;
-  gap: 3px 10px;
-  align-items: center;
-  font-size: 12px;
-  color: var(--mute);
-  svg { display: block; overflow: visible; color: var(--fg); }
-  .spk { fill: none; stroke: var(--fg); stroke-width: 1; stroke-dasharray: 1 3; stroke-linecap: round; }
-}
-
-.ring-sec {
-  margin-top: 26px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid var(--line);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-.ring-threads {
-  margin-top: 6px;
-  button {
-    display: grid;
-    grid-template-columns: 9.5ch 1fr auto;
-    column-gap: 12px;
-    width: 100%;
-    padding: 1px 6px;
-    margin: 0 -6px;
-    width: calc(100% + 12px);
-    font-size: 13px;
-    line-height: 1.8;
-    text-align: left;
-  }
-  .mk { font-family: var(--fig); white-space: nowrap; }
-  .n { color: var(--mute); font-variant-numeric: tabular-nums; }
-  button:hover, button.on { background: var(--fg); color: var(--bg); }
-  button:hover .n, button.on .n { color: var(--bg); }
-}
-
-/* the note, thread or field under the pointer */
-.ring-info {
-  margin-top: 24px;
-  padding-top: 14px;
-  border-top: 1px solid var(--line);
-  .crumb { font-size: 12px; color: var(--mute); }
-  h2 { margin-top: 4px; font-family: var(--sans); font-size: 19px; line-height: 1.35; font-weight: 700; }
-  .sum { margin-top: 8px; font-family: var(--sans); font-size: 14px; line-height: 1.7; }
-  .tags { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
-  .box { font-family: var(--fig); }
-  .meta { margin-top: 10px; font-size: 12px; color: var(--mute); line-height: 1.7; }
-  .meta b { color: var(--fg); font-weight: 400; }
-  .go { display: inline-block; margin-top: 10px; font-size: 13px; }
-  .idle { font-size: 13px; line-height: 1.75; color: var(--mute); }
-  .x { display: none; }
-}
-
 /* ---- the ring ---- */
-.ring-svg text { font-family: var(--mono); }
+/* Ring labels tighten their word spaces ($word-tight); never figures, where
+   the grid must hold. The measuring text gets the same rule so label
+   widths come out right. */
+.ring-svg text, .ring-measure text { font-family: var(--mono); word-spacing: $word-tight; }
+.ring-svg .area { word-spacing: 0; }
 .ring-arc { fill: none; stroke: var(--fg); stroke-width: 1; }
 .lnk { fill: none; stroke: var(--fg); stroke-width: 1; stroke-linecap: round; }
 .lnk.c0 { stroke-opacity: var(--k0); }
@@ -179,77 +139,55 @@ $ring-wide: 960px;
 .ringmap .zoom button { min-width: 34px; height: 30px; padding: 0 9px; border: 1px solid var(--fg); margin-left: -1px; background: var(--bg); font-size: 13px; text-align: center; }
 .ringmap .zoom button:hover { background: var(--fg); color: var(--bg); }
 
-/* phones: the note panel becomes a sheet that rises from the bottom when a
-   note is tapped (the second tap opens the note) */
+/* phones: a tapped note's lines rise as a sheet from the bottom (the
+   second tap opens the note); at rest they stay under the title */
 @media (max-width: 759px) {
-  .ringmap { margin: 6px -8px 0; padding-top: 0; }
-  .ring-head { order: 1; }
-  .ring-info {
+  .ringmap { margin: 0 -8px; padding-top: 0; }
+  .ring-status { height: 4.4em; }
+  .ring-info.open {
     position: fixed;
     left: 0; right: 0; bottom: 0;
     z-index: 5;
+    max-width: none;
     margin: 0;
-    padding: 14px 20px calc(16px + env(safe-area-inset-bottom));
+    padding: 16px 52px calc(18px + env(safe-area-inset-bottom)) 20px;
     background: var(--bg);
     border-top: 1px solid var(--line);
-    max-height: 46vh;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    transform: translateY(105%);
-    transition: transform 0.15s ease-out;
-    &.open { transform: none; }
-    .idle { display: none; }
-    h2 { font-size: 17px; padding-right: 40px; }
-    .x { display: block; position: absolute; right: 10px; top: 8px; width: 36px; height: 36px; text-align: center; font-size: 16px; }
+    text-align: left;
+    .l1 { justify-content: flex-start; white-space: normal; flex-wrap: wrap; }
+    .l2 { -webkit-line-clamp: 4; }
+    .go { display: inline-block; margin-top: 10px; font-size: 15px; }
+    .x { display: block; position: absolute; right: 10px; top: 10px; width: 36px; height: 36px; text-align: center; font-size: 18px; }
     .x:hover { background: var(--fg); color: var(--bg); }
-    @media (prefers-reduced-motion: reduce) { transition: none; }
   }
 }
-@media (max-width: $ring-wide) {
-  /* one column: the ring right under the lede, then legend and threads */
-  .ring-side { display: contents; }
-  .ring-head { order: 1; }
-  .ringmap { order: 2; }
-  .ring-legend { order: 3; }
-  .ring-sec { order: 4; }
-  .ring-threads { order: 5; }
-  .ring-info { order: 6; }
+
+/* ---- the index: one plain list per subject ---- */
+.index {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 40px 48px;
+  margin-top: 64px;
 }
-
-/* ---- the index, and a note's connections: drawn like `tree` ---- */
-.index .tree { margin-top: 18px; }
-.tree {
-  font-family: var(--fig);
-  font-size: 14px;
-  line-height: 1.25;
-
-  .ln { display: flex; align-items: baseline; height: 1.25em; white-space: pre; }
-  .g { flex: none; }
-  .lb {
-    display: flex;
-    flex: 1 1 auto;
-    min-width: 0;
-    gap: 0 1.5ch;
-    align-items: baseline;
-    margin-left: 0.5ch;
-    font-family: var(--mono);
-    color: var(--fg);
-    text-decoration: none;
-  }
-  a.lb:hover { background: var(--fg); color: var(--bg); }
-  .tt { white-space: nowrap; }
-  .en, .sm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--mute); font-size: 12px; }
-  .sm { flex: 1 1 auto; min-width: 0; }
-  .ct { margin-left: auto; padding-left: 1ch; color: var(--mute); font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  a.lb:hover .en, a.lb:hover .ct, a.lb:hover .sm { color: var(--bg); }
-  .root .lb { margin-left: 0; }
-  .root .tt, .area .tt { font-weight: 700; }
-  .empty .lb { color: var(--mute); }
-
-  @media (max-width: $bp-mobile) {
-    font-size: 13px;
-    .en, .sm { display: none; }
-  }
+.index-group h2 {
+  word-spacing: $word-tight;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+  font-size: 17px;
+  font-weight: 700;
+  .cnt { color: var(--mute); font-weight: 400; font-size: 15px; }
+}
+.index-list {
+  font-size: 16px;
+  li { display: flex; gap: 10px; align-items: baseline; margin-bottom: 5px; }
+  .dot { flex: none; color: var(--mute); }
+  a { min-width: 0; color: var(--fg); text-decoration: none; word-spacing: $word-tight; }
+  a:hover { background: var(--fg); color: var(--bg); }
+  .m { margin-left: auto; word-spacing: $word-tight; padding-left: 12px; color: var(--mute); font-size: 14px; white-space: nowrap; }
 }
 
 /* ---- a note ---- */
@@ -260,7 +198,7 @@ $ring-wide: 960px;
     align-items: baseline;
     gap: 0 0.6ch;
     margin-bottom: 14px;
-    font-size: 13px;
+    font-size: 14px;
     color: var(--mute);
     a { color: var(--fg); text-decoration: none; }
     a:hover { background: var(--fg); color: var(--bg); }
@@ -284,7 +222,7 @@ $ring-wide: 960px;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  .chip { font-size: 12px; }
+  .chip { font-size: 13px; }
   .mk { font-family: var(--fig); font-weight: 700; }
   .n { color: var(--mute); margin-left: 2px; }
   .chip:hover .n { color: var(--bg); }
@@ -330,10 +268,11 @@ $ring-wide: 960px;
 }
 
 /* a note's connections: the ring resting on this note, then the list */
+.connections .sec-h { font-size: 14px; }
 .connections { margin-top: 56px; }
 .note-ring { display: block; }
 .note-ring .ringmap { padding-top: 12px; margin: 0; }
-.cn-tree { margin-top: 18px; }
+.cn-list { margin-top: 20px; }
 
 .pager {
   display: flex;

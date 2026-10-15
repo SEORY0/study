@@ -8,7 +8,7 @@
    nothing reads as a sequence.
 
    The page holds one container with data-ring:
-     data-ring="full"  the study page: ring, thread list, note panel
+     data-ring="full"  the study page: the ring and its status lines
      data-ring="note"  a note page: a smaller ring that starts on that note
      data-graph        url of graph.json (built by Jekyll from the notes)
      data-focus        (note pages) the slug of the note
@@ -175,8 +175,8 @@ function improveNotes(s, pos) {
    from the ring to a label, gb/ga gaps before subject/area names, pitch
    the least distance between two labels along the ring.               */
 const PRESET = {
-  wide:  { fl: 13, fs: 11, fa: 11.5, off: 11, dot: 3,   gb: 15, ga: 14, hug: 0, hugA: 0, merge: false, padS: 12, padA: 18, pitch: 15.5, endGap: 6, rmax: 300 },
-  small: { fl: 11, fs: 10, fa: 10.5, off: 7,  dot: 2.4, gb: 9,  ga: 8,  hug: 1, hugA: 1, merge: true,  padS: 6,  padA: 10, pitch: 12.5, endGap: 4, rmax: 220 }
+  wide:  { fl: 15, fs: 12.5, fa: 13, off: 12, dot: 3.3, gb: 16, ga: 15, hug: 0, hugA: 0, merge: false, padS: 13, padA: 20, pitch: 18, endGap: 6, rmax: 340, fh: 12.5 },
+  small: { fl: 12, fs: 10.5, fa: 11, off: 7,  dot: 2.6, gb: 9,  ga: 8,  hug: 1, hugA: 1, merge: true,  padS: 6,  padA: 10, pitch: 15, endGap: 4, rmax: 240, fh: 11 }
 };
 const K = { s: 0.72, a: 0.45, g: 0.2, beta: 0.85 };   // bundle radii (x R) and strength
 
@@ -204,7 +204,7 @@ function measure(M, P) {
     s.cap = P.merge && s.area.capital === s;
     s.nw = w(s.name, P.fs) + (s.cap ? w(s.area.name, P.fs, 0.16) + 7 : 0);
   });
-  M.threads.forEach(t2 => { t2.mw = w(t2.mark, 11); });
+  M.threads.forEach(t2 => { t2.mw = w(t2.mark, P.fh); });
 }
 
 function layout(M, P, W, H, phone) {
@@ -440,8 +440,11 @@ function draw(M, G) {
   if (zoom) {
     svg.style.aspectRatio = ''; svg.style.margin = '0';
     svg.style.width = G.W + 'px'; svg.style.height = (G.phone ? Math.round(Math.min(G.W * 1.15, window.innerHeight * 0.72)) : G.H) + 'px';
-  } else if (G.phone || G.overflow) {
+  } else if (G.phone) {
     svg.style.aspectRatio = vb[2] + ' / ' + vb[3]; svg.style.width = '100%'; svg.style.height = 'auto'; svg.style.margin = '0';
+  } else if (G.overflow) {
+    // taller than the window: never larger than its own size, the page scrolls
+    svg.style.aspectRatio = vb[2] + ' / ' + vb[3]; svg.style.width = f2(Math.min(G.W, vb[2])) + 'px'; svg.style.height = 'auto'; svg.style.margin = '0 auto';
   } else {
     svg.style.aspectRatio = ''; svg.style.width = f2(vb[2]) + 'px'; svg.style.height = f2(vb[3]) + 'px'; svg.style.margin = '0 auto';
   }
@@ -549,8 +552,8 @@ function draw(M, G) {
   const gH = el('g', {}, svg);
   for (const t of M.threads) {
     const g = el('g', { class: 'hub', 'aria-hidden': 'true' }, gH);
-    el('rect', { x: f2(t.h[0] - t.mw / 2 - 4), y: f2(t.h[1] - 9), width: f2(t.mw + 8), height: 18, fill: 'transparent' }, g);
-    const tx = el('text', { x: f2(t.h[0]), y: f2(t.h[1]), dy: '.35em', 'text-anchor': 'middle', 'font-size': 11 }, g);
+    el('rect', { x: f2(t.h[0] - t.mw / 2 - 4), y: f2(t.h[1] - P.fh * 0.8), width: f2(t.mw + 8), height: f2(P.fh * 1.6), fill: 'transparent' }, g);
+    const tx = el('text', { x: f2(t.h[0]), y: f2(t.h[1]), dy: '.35em', 'text-anchor': 'middle', 'font-size': P.fh }, g);
     tx.textContent = t.mark;
     t.hub = g;
     bind(g, { kind: 'thread', ref: t });
@@ -656,7 +659,6 @@ function apply() {
   const cur = ui.hover || ui.pin || REST;
   const svg = $('.ring-svg');
   svg.querySelectorAll('.on,.nb,.hot').forEach(e => e.classList.remove('on', 'nb', 'hot'));
-  root.querySelectorAll('.ring-threads .on').forEach(e => e.classList.remove('on'));
   svg.classList.toggle('dim', !!cur);
   info(ui.hover || ui.pin);
   if (!cur) return;
@@ -679,73 +681,42 @@ function apply() {
   lit.forEach(n => n.g.classList.add('on'));
   nb.forEach(n => { if (!lit.has(n)) n.g.classList.add('nb'); });
   links.forEach(L => L.el.classList.add('on'));
-  ths.forEach(t => { t.hub.classList.add('on'); t.spk.classList.add('on'); if (t.btn) t.btn.classList.add('on'); });
+  ths.forEach(t => { t.hub.classList.add('on'); t.spk.classList.add('on'); });
   subs.forEach(s => { s.el.classList.add('on'); s.arc.classList.add('on'); });
   areas.forEach(a => { if (a.el) a.el.classList.add('on'); (a.lines || []).forEach(l => l.classList.add('on')); });
 }
 
-/* the note panel (study page only) */
+/* the status lines under the title (study page only): what the ring is
+   showing, in two lines of fixed height so the ring never moves. On
+   phones the same lines rise as a sheet from the bottom on a tap. */
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 function info(cur) {
   const box = $('.ring-info');
   if (!box) return;
   box.classList.toggle('open', !!cur);
-  const close = '<button class="x" type="button" aria-label="닫기">×</button>';
+  let l1, l2, go = '';
+  const r = cur && cur.ref;
   if (!cur) {
-    const far = M.links.filter(L => L.cls >= 2).length, out = M.links.filter(L => L.cls === 3).length;
-    const awayNames = M.order.filter(a => !a.home).map(a => a.name).join('·');
-    box.innerHTML = `<p class="idle">연결 ${M.links.length}개 중 ${far}개가 분야를 넘고, ${out}개는 전공 밖(${esc(awayNames)})으로 건너간다. 점이나 이름을 가리키면 이어진 것만 남는다.</p>`;
-    return;
-  }
-  const r = cur.ref;
-  if (cur.kind === 'note') {
-    const far = r.links.filter(L => L.cls >= 2).length;
-    const near = r.links.map(L => (L.a === r ? L.b : L.a)).sort((a, b) => a.u - b.u);
-    box.innerHTML = close + `<p class="crumb">${esc(r.area.name)} › ${esc(r.sub.name)}</p><h2>${esc(r.title)}</h2>` +
-      `<p class="sum">${esc(r.summary)}</p>` +
-      (r.ths.length ? `<p class="tags">${r.ths.map(t => `<span class="box">${esc(t.mark)} ${esc(t.name)}</span>`).join('')}</p>` : '') +
-      `<p class="meta">연결 <b>${r.links.length}</b>` + (far ? ` · 다른 분야로 <b>${far}</b>` : '') +
-      `<br>${near.map(m => esc(m.short)).join(', ')}</p>` +
-      `<a class="go" href="${esc(r.url)}">노트 열기 →</a>`;
+    l1 = `노트 ${M.notes.length} · 연결 ${M.links.length} · 실 ${M.threads.length}`;
+    l2 = '점이나 이름을 가리키면 이어진 것만 남는다';
+  } else if (cur.kind === 'note') {
+    l1 = `<b>${esc(r.title)}</b><span class="m">${esc(r.sub.name)}</span>`;
+    l2 = esc(r.summary);
+    go = `<a class="go" href="${esc(r.url)}">노트 열기 →</a>`;
   } else if (cur.kind === 'thread') {
-    const subsOf = [...new Set(r.notes.map(n => n.sub.name))];
-    box.innerHTML = close + `<p class="crumb">실 · 노트 ${r.notes.length}개, 과목 ${subsOf.length}개</p><h2>${esc(r.mark)} ${esc(r.name)}</h2>` +
-      `<p class="meta">${r.notes.slice().sort((a, b) => a.u - b.u).map(n => `<b>${esc(n.short)}</b> <span>${esc(n.sub.name)}</span>`).join('<br>')}</p>`;
+    l1 = `<b>${esc(r.mark)} ${esc(r.name)}</b><span class="m">노트 ${r.notes.length}</span>`;
+    l2 = r.notes.slice().sort((a, b) => a.u - b.u).map(n => esc(n.short)).join(' · ');
   } else {
     const notes = cur.kind === 'sub' ? r.notes : r.subs.flatMap(s => s.notes);
-    const set = new Set(notes), outLinks = new Set();
-    notes.forEach(n => n.links.forEach(L => { if (!set.has(L.a) || !set.has(L.b)) outLinks.add(L); }));
-    box.innerHTML = close + `<p class="crumb">${cur.kind === 'sub' ? esc(r.area.name) + ' › 과목' : '분야' + (r.home ? '' : ' · 전공 밖')}</p><h2>${esc(r.name)}</h2>` +
-      `<p class="meta">노트 <b>${notes.length}</b> · 밖으로 이어진 연결 <b>${outLinks.size}</b><br>${notes.map(n => esc(n.short)).join(', ')}</p>`;
+    const set = new Set(notes), out = new Set();
+    notes.forEach(n => n.links.forEach(L => { if (!set.has(L.a) || !set.has(L.b)) out.add(L); }));
+    l1 = `<b>${esc(r.name)}</b><span class="m">노트 ${notes.length} · 밖으로 ${out.size}</span>`;
+    l2 = notes.map(n => esc(n.short)).join(' · ');
   }
+  box.innerHTML = (cur ? '<button class="x" type="button" aria-label="닫기">×</button>' : '') +
+    `<p class="l1">${l1}</p><p class="l2">${l2}</p>${go}`;
   const x = box.querySelector('.x');
   if (x) x.addEventListener('click', () => { ui.pin = null; ui.hover = null; apply(); });
-}
-
-/* the thread list (study page only) */
-function lists() {
-  const ul = $('.ring-threads');
-  if (ul) {
-    ul.textContent = '';
-    for (const t of M.threads) {
-      const li = document.createElement('li');
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.innerHTML = `<span class="mk">${esc(t.mark)}</span><span>${esc(t.name)}</span><span class="n">${t.notes.length}</span>`;
-      b.setAttribute('aria-label', `${t.mark} ${t.name}, 노트 ${t.notes.length}개`);
-      li.appendChild(b); ul.appendChild(li);
-      t.btn = b;
-      const tg = { kind: 'thread', ref: t };
-      b.addEventListener('pointerenter', e => { if (e.pointerType !== 'touch') { ui.hover = tg; apply(); } });
-      b.addEventListener('pointerleave', e => { if (e.pointerType !== 'touch') { ui.hover = null; apply(); } });
-      b.addEventListener('focus', () => { ui.hover = tg; apply(); });
-      b.addEventListener('blur', () => { ui.hover = null; apply(); });
-      b.addEventListener('click', () => { ui.pin = same(ui.pin, tg) ? null : tg; apply(); });
-    }
-  }
-  root.querySelectorAll('[data-count]').forEach(e => {
-    e.textContent = `${M.notes.length} notes · ${M.links.length} links · ${M.threads.length} threads`;
-  });
 }
 
 /* ?check=1: test every pair of visible text boxes for overlap and write
@@ -786,7 +757,9 @@ function sizeAndDraw() {
     H = Math.round(phone ? W * 1.2 : Math.min(W, 640));
   } else {
     const top = map.getBoundingClientRect().top + window.scrollY;
-    H = phone ? Math.round(W * 1.35) : Math.max(560, window.innerHeight - top - 40);
+    // fill the window under the title, but never so small that the links
+    // crowd the middle: the ring may run a little past the fold
+    H = phone ? Math.round(W * 1.35) : Math.max(740, window.innerHeight - top - 40);
   }
   G = layout(M, P, W, H, phone);
   hierarchy(M, G);
@@ -799,7 +772,6 @@ function start(data) {
   M = model(data);
   if (!M.notes.length) return;
   orderRing(M);
-  lists();
   zoomSetup();
   $('.ring-svg').addEventListener('click', e => {
     if (!e.target.closest('.note,.sub,.area,.hub')) { ui.pin = null; ui.hover = null; apply(); }

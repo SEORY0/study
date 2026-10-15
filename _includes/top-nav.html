@@ -1,15 +1,7 @@
-{%- comment -%}
-  The main site's top line. seory0 and writings live in the SEORY0.github.io
-  repository at the root of the same origin, so they are root-relative
-  (they 404 on a local preview, which serves only /study/).
-{%- endcomment -%}
 <header class="wrap topline">
-  <a class="name" href="/">seory0</a>
+  <a class="name" href="{{ '/' | relative_url }}">study</a>
   <nav aria-label="Site">
-    <a href="/writing/">writings</a>
-    <a href="{{ '/' | relative_url }}"{% if page.layout == 'home' %} aria-current="page"{% elsif page.layout == 'note' %} aria-current="location"{% endif %}>study</a>
-    <a href="https://github.com/SEORY0" target="_blank" rel="noopener">github</a>
-    <a href="mailto:{{ site.author.email }}">mail</a>
+    <a href="https://github.com/SEORY0/study" target="_blank" rel="noopener">github</a>
     <button id="nav-theme-btn" type="button" aria-label="Dark mode" aria-pressed="false">[<span class="t-dark">dark</span><span class="t-light">light</span>]</button>
   </nav>
 </header>

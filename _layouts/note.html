@@ -84,29 +84,20 @@ layout: compress
       <div class="ring-stage note-ring" data-ring="note" data-graph="{{ '/graph.json' | relative_url }}" data-focus="{{ page.slug }}">
         <div class="ringmap"><svg class="ring-svg" role="group" aria-label="이 노트와 이어진 노트를 둘레에 그린 지도"></svg></div>
       </div>
-      <div class="tree cn-tree">
+      <ul class="index-list cn-list">
       {%- assign nt_items = nt_cn | split: ";" -%}
-      {%- assign nt_areas = "" | split: "" -%}
       {%- for a in site.data.study.areas -%}
-        {%- capture nt_ak -%}{{ a.id }}:{%- endcapture -%}
-        {%- if nt_cn contains nt_ak -%}{%- assign nt_areas = nt_areas | push: a -%}{%- endif -%}
-      {%- endfor -%}
-      {%- for a in nt_areas -%}
-        {%- assign nt_lasta = forloop.last -%}
-        {%- capture nt_ak -%}{{ a.id }}:{%- endcapture -%}
-        <div class="ln area"><span class="g" aria-hidden="true">{% if nt_lasta %}└──{% else %}├──{% endif %}&nbsp;</span><span class="lb"><span class="tt">{{ a.name }}</span></span></div>
-        {%- assign nt_mine = "" | split: "" -%}
         {%- for it in nt_items -%}
           {%- assign nt_kv = it | split: ":" -%}
-          {%- if nt_kv[0] == a.id -%}{%- assign nt_idx = nt_kv[1] | plus: 0 -%}{%- assign nt_mine = nt_mine | push: notes_in_order[nt_idx] -%}{%- endif -%}
-        {%- endfor -%}
-        {%- for d in nt_mine -%}
+          {%- if nt_kv[0] != a.id -%}{%- continue -%}{%- endif -%}
+          {%- assign nt_idx = nt_kv[1] | plus: 0 -%}
+          {%- assign d = notes_in_order[nt_idx] -%}
           {%- assign nt_dp = d.relative_path | split: "/" -%}
           {%- assign nt_ds = site.data.study.subjects | where: "id", nt_dp[1] | first -%}
-          <div class="ln leaf"><span class="g" aria-hidden="true">{% if nt_lasta %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}│&nbsp;&nbsp;&nbsp;{% endif %}{% if forloop.last %}└──{% else %}├──{% endif %}&nbsp;</span><a class="lb" href="{{ d.url | relative_url }}"><span class="tt">{{ d.short | default: d.title }}</span><span class="ct">{{ nt_ds.name }}</span></a></div>
+        <li><span class="dot" aria-hidden="true">·</span><a href="{{ d.url | relative_url }}">{{ d.title }}</a><span class="m">{{ nt_ds.name }}</span></li>
         {%- endfor -%}
       {%- endfor -%}
-      </div>
+      </ul>
     </section>
     {%- endif %}
 
