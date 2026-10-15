@@ -1,0 +1,65 @@
+/* ========================================================================== */
+/* Article: a note is the main site's article (mono header, sans body).        */
+/* ========================================================================== */
+
+.by {
+  margin-top: 8px;
+  font-size: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  color: var(--mute);
+}
+
+/* ---- article ---- */
+.post-head {
+  margin-top: 36px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+.post-title {
+  font-family: var(--sans);
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  @media (max-width: $bp-mobile) { font-size: 24px; }
+}
+.post-head .by { margin-top: 12px; }
+
+.post-content,
+.page-content {
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.8;
+  margin-top: 28px;
+
+  p { margin: 0 0 1.2em; }
+  h2 { font-size: 23px; font-weight: 700; margin: 2.2em 0 0.7em; padding-bottom: 0.3em; border-bottom: 1px solid var(--line); letter-spacing: -0.01em; }
+  h3 { font-size: 19px; font-weight: 700; margin: 1.8em 0 0.5em; }
+  h4 { font-size: 17px; font-weight: 700; margin: 1.4em 0 0.4em; }
+  h2[id], h3[id] { scroll-margin-top: 16px; }
+
+  ul, ol { margin: 0 0 1.2em 1.4em; }
+  ul { list-style: disc; }
+  ol { list-style: decimal; }
+  li { margin-bottom: 0.3em; }
+
+  a:hover { background: var(--fg); color: var(--bg); }
+
+  blockquote { border-left: 1px solid var(--line); padding: 2px 0 2px 16px; margin: 1.4em 0; color: var(--mute); }
+  img { display: block; border: 1px solid var(--line); margin: 1.4em 0; }
+  figure { margin: 1.4em 0; }
+  figcaption { font-family: var(--mono); font-size: 13px; color: var(--mute); margin-top: 6px; }
+  hr { margin: 2.2em 0; }
+
+  table { width: 100%; border-collapse: collapse; margin: 1.4em 0; font-size: 15px; }
+  th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  @media (max-width: $bp-mobile) {
+    table { display: block; overflow-x: auto; }
+  }
+}
+

@@ -1,0 +1,12 @@
+/* Study Mono Fill: the Greek, maths, arrow and caret glyphs Server Mono
+   lacks, at Server Mono's advance and metrics (docs/build-fill-font.py,
+   from JetBrains Mono NL, SIL OFL 1.1). Placed right after Server Mono in
+   --fig and --mono so hand-drawn figures keep one grid. */
+@font-face {
+  font-family: 'Study Mono Fill';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(StudyMonoFill.woff2) format('woff2');
+  unicode-range: U+005E, U+00B0, U+00B1, U+00D7, U+00F7, U+0393-03C9, U+2032, U+2190-2194, U+21D2, U+2202, U+2207, U+2208, U+220B, U+220F, U+2211, U+2212, U+2218, U+221A, U+221E, U+2220, U+222B, U+2248, U+2260, U+2261, U+2264, U+2265;
+}

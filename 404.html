@@ -1,0 +1,27 @@
+---
+layout: compress
+permalink: /404.html
+title: "Not found"
+sitemap: false
+---
+<!DOCTYPE html>
+<html lang="en">
+{% include head.html %}
+<body class="page-not-found">
+<a href="#main-content" class="skip-to-content">Skip to content</a>
+
+{% include top-nav.html %}
+
+<main class="wrap not-found" id="main-content">
+  <h1>404 · not found</h1>
+  <p>No note lives at this address. It may have moved; the map lists every note.</p>
+  <nav aria-label="Other pages">
+    <a class="box" href="{{ '/' | relative_url }}">map</a>
+    <a class="box" href="/">seory0</a>
+  </nav>
+</main>
+
+{% include footer.html %}
+{% include scripts.html %}
+</body>
+</html>

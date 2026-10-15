@@ -1,0 +1,41 @@
+/* Shared, contrast-checked syntax colors for both themes. */
+:root {
+  --syntax-comment: #537343;
+  --syntax-keyword: #0000cc;
+  --syntax-function: #795e26;
+  --syntax-string: #a31515;
+  --syntax-number: #08774e;
+  --syntax-type: #1f7087;
+  --syntax-name: #001080;
+  --syntax-error: #ad2424;
+}
+.theme-dark {
+  --syntax-comment: #8eaf7d;
+  --syntax-keyword: #75b9ef;
+  --syntax-function: #dcdcaa;
+  --syntax-string: #ce9178;
+  --syntax-number: #b5cea8;
+  --syntax-type: #4ec9b0;
+  --syntax-name: #9cdcfe;
+  --syntax-error: #ff8080;
+}
+
+.highlight table td { padding: 5px; }
+.highlight table pre { margin: 0; }
+.highlight { color: var(--code-text-color); background: var(--code-block-bg); }
+.highlight .c, .code-wrapper .c, .highlight .ch, .code-wrapper .ch, .highlight .cd, .code-wrapper .cd, .highlight .cm, .code-wrapper .cm, .highlight .cp, .code-wrapper .cp, .highlight .cpf, .code-wrapper .cpf, .highlight .c1, .code-wrapper .c1, .highlight .cs, .code-wrapper .cs, .highlight .gl, .code-wrapper .gl, .highlight .gt, .code-wrapper .gt { color: var(--syntax-comment); }
+.highlight .k, .code-wrapper .k, .highlight .kc, .code-wrapper .kc, .highlight .kd, .code-wrapper .kd, .highlight .kn, .code-wrapper .kn, .highlight .kp, .code-wrapper .kp, .highlight .kr, .code-wrapper .kr, .highlight .kt, .code-wrapper .kt, .highlight .kv, .code-wrapper .kv, .highlight .o, .code-wrapper .o, .highlight .ow, .code-wrapper .ow { color: var(--syntax-keyword); }
+.highlight .nf, .code-wrapper .nf, .highlight .fm, .code-wrapper .fm, .highlight .nd, .code-wrapper .nd { color: var(--syntax-function); }
+.highlight .s, .code-wrapper .s, .highlight .sa, .code-wrapper .sa, .highlight .sb, .code-wrapper .sb, .highlight .sc, .code-wrapper .sc, .highlight .dl, .code-wrapper .dl, .highlight .sd, .code-wrapper .sd, .highlight .s2, .code-wrapper .s2, .highlight .se, .code-wrapper .se, .highlight .sh, .code-wrapper .sh, .highlight .si, .code-wrapper .si, .highlight .sx, .code-wrapper .sx, .highlight .sr, .code-wrapper .sr, .highlight .s1, .code-wrapper .s1, .highlight .ss, .code-wrapper .ss { color: var(--syntax-string); }
+.highlight .l, .code-wrapper .l, .highlight .ld, .code-wrapper .ld, .highlight .m, .code-wrapper .m, .highlight .mb, .code-wrapper .mb, .highlight .mf, .code-wrapper .mf, .highlight .mh, .code-wrapper .mh, .highlight .mi, .code-wrapper .mi, .highlight .il, .code-wrapper .il, .highlight .mo, .code-wrapper .mo, .highlight .mx, .code-wrapper .mx { color: var(--syntax-number); }
+.highlight .nc, .code-wrapper .nc, .highlight .nt, .code-wrapper .nt, .highlight .nn, .code-wrapper .nn, .highlight .nb, .code-wrapper .nb, .highlight .no, .code-wrapper .no { color: var(--syntax-type); }
+.highlight .nv, .code-wrapper .nv, .highlight .vc, .code-wrapper .vc, .highlight .vg, .code-wrapper .vg, .highlight .vi, .code-wrapper .vi, .highlight .vm, .code-wrapper .vm, .highlight .na, .code-wrapper .na, .highlight .bp, .code-wrapper .bp, .highlight .ne, .code-wrapper .ne, .highlight .nl, .code-wrapper .nl, .highlight .py, .code-wrapper .py, .highlight .gh, .code-wrapper .gh, .highlight .gu, .code-wrapper .gu { color: var(--syntax-name); }
+.highlight .err, .code-wrapper .err, .highlight .gr, .code-wrapper .gr { color: var(--syntax-error); }
+.highlight .gd, .code-wrapper .gd { color: #82071e; background: #ffebe9; }
+.highlight .gi, .code-wrapper .gi { color: #116329; background: #dafbe1; }
+.theme-dark .highlight .gd, .theme-dark .code-wrapper .gd { color: #ffd6d6; background: #542929; }
+.theme-dark .highlight .gi, .theme-dark .code-wrapper .gi { color: #c2f2cb; background: #23432a; }
+.highlight .ges, .code-wrapper .ges { font-weight: bold; font-style: italic; }
+.highlight .ge, .code-wrapper .ge { font-style: italic; }
+.highlight .gs, .highlight .gh, .highlight .gu,
+.code-wrapper .gs, .code-wrapper .gh, .code-wrapper .gu { font-weight: bold; }

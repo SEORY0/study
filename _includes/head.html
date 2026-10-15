@@ -1,0 +1,48 @@
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script>/* FOUC guard: apply the saved theme before first paint. The key is the main site's, so the choice carries between seory0.github.io and /study/ (one origin). No // comments: the compress layout joins lines. */(function(){try{var t=localStorage.getItem('theme');var dark=t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(dark)document.documentElement.classList.add('theme-dark');}catch(e){}})();</script>
+
+  {%- if page.layout == 'note' -%}
+    {%- assign page_title = page.title | append: " · study" -%}
+  {%- elsif page.title and page.layout != 'home' -%}
+    {%- assign page_title = page.title | append: " · study" -%}
+  {%- else -%}
+    {%- assign page_title = "study · SEORY0" -%}
+  {%- endif -%}
+  {% assign page_description = page.description | default: page.summary | default: site.description | strip_html | truncatewords: 50 %}
+  <title>{{ page_title | escape }}</title>
+  <meta name="description" content="{{ page_description | escape }}">
+  <meta name="author" content="{{ site.author.name }}">
+
+  <meta property="og:title" content="{{ page_title | escape }}">
+  <meta property="og:description" content="{{ page_description | escape }}">
+  <meta property="og:url" content="{{ page.url | absolute_url }}">
+  <meta property="og:site_name" content="SEORY0">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:type" content="{% if page.layout == 'note' %}article{% else %}website{% endif %}">
+  <meta property="og:image" content="{{ site.og_image | absolute_url }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="{{ site.og_image_alt | escape }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="{{ site.og_image | absolute_url }}">
+  <meta name="twitter:image:alt" content="{{ site.og_image_alt | escape }}">
+
+  <link rel="canonical" href="{{ page.url | absolute_url }}">
+  <link rel="icon" href="{{ '/favicon.png' | relative_url }}">
+  <link rel="sitemap" type="application/xml" title="sitemap" href="{{ '/sitemap.xml' | relative_url }}">
+  <link rel="preload" href="{{ '/assets/fonts/portfolio-sans/portfolio-sans.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ '/assets/fonts/server-mono/ServerMono-Regular.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{{ '/assets/fonts/pretendard/font.css' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/fonts/portfolio-sans/font.css' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/fonts/server-mono/font.css' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/fonts/study-mono-fill/font.css' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/fonts/mono/font.css' | relative_url }}">
+  {%- if page.layout == 'note' %}
+  <link rel="stylesheet" href="{{ '/assets/css/syntax.css' | relative_url }}">
+  {%- endif %}
+
+  <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}?v={{ site.time | date: '%s' }}">
+</head>

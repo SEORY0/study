@@ -1,0 +1,11 @@
+{%- comment -%}
+  Sets `notes_in_order`: every note in map order, subject by subject in the
+  order of _data/study.yml, then by each note's `order`. A note's subject is
+  its folder: _notes/<subject>/<slug>.md.
+{%- endcomment -%}
+{%- assign notes_in_order = "" | split: "" -%}
+{%- for s in site.data.study.subjects -%}
+  {%- capture notes_needle -%}_notes/{{ s.id }}/{%- endcapture -%}
+  {%- assign notes_part = site.notes | where_exp: "d", "d.relative_path contains notes_needle" | sort: "order" -%}
+  {%- assign notes_in_order = notes_in_order | concat: notes_part -%}
+{%- endfor -%}

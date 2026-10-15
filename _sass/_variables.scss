@@ -1,0 +1,45 @@
+@charset "utf-8";
+
+/* ========================================================================== */
+/* Tokens — white page, black ink, one mono. Six colours, two typefaces.       */
+/* Dark mode flips the colours via .theme-dark on <html> (set by the head      */
+/* FOUC guard and theme-toggle.js), so there is no second media query here.   */
+/* ========================================================================== */
+
+$bp-mobile: 560px;
+
+:root {
+  --bg: #ffffff;
+  --fg: #000000;
+  --mute: #666666;
+  --line: #000000;
+  --link: #1a0dab;              /* classic link blue — old HTML and projectzero.google alike */
+
+  /* One monospace for everything mono. Berkeley Mono (US Graphics Company,
+     commercial; see assets/fonts/berkeley/README.md) leads if its files are
+     present; Server Mono (OFL, shipped) is the face that actually renders;
+     IBM Plex Mono is the fallback. Box-drawing and block glyphs (the figlet
+     banner) need a system mono — see .banner in _home.scss. */
+  --mono: "Berkeley Mono", "TX-02", "Server Mono", "Study Mono Fill", "IBM Plex Mono", "SF Mono", Consolas, "Portfolio Sans", "Pretendard Variable", monospace;
+  /* Hand-drawn figures and the study map: one grid, no fallback widths.
+     Study Mono Fill adds Greek, maths and arrows at Server Mono's
+     advance (it follows Server Mono in --mono too); Hangul, which is never part of the grid, falls
+     through to Pretendard. */
+  --fig: "Server Mono", "Study Mono Fill", "IBM Plex Mono", "Portfolio Sans", "Pretendard Variable", Consolas, monospace;
+  /* Long-form reading (articles) and Korean copy. */
+  --sans: "Portfolio Sans", "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* syntax.css reads these two. */
+  --code-block-bg: #ffffff;
+  --code-text-color: #000000;
+}
+
+.theme-dark {
+  --bg: #0d0d0d;
+  --fg: #e8e8e8;
+  --mute: #8a8a8a;
+  --line: #e8e8e8;
+  --link: #8ab4f8;
+  --code-block-bg: #0d0d0d;
+  --code-text-color: #e8e8e8;
+}

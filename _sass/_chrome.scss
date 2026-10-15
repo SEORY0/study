@@ -1,0 +1,69 @@
+/* ========================================================================== */
+/* Chrome — one rule above the page (the top line) and one below (the foot).  */
+/* Static, not sticky. No background, no blur.                                 */
+/* ========================================================================== */
+
+.topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  height: 52px;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+  white-space: nowrap;
+
+  .name { font-weight: 700; color: var(--fg); text-decoration: none; }
+  nav { display: flex; gap: 14px; align-items: center; }
+  nav a, nav button { color: var(--fg); text-decoration: none; }
+  nav a:hover, nav button:hover, .name:hover { background: var(--fg); color: var(--bg); }
+  nav a[aria-current] { text-decoration: underline; text-underline-offset: 4px; }
+
+  @media (max-width: $bp-mobile) {
+    font-size: 12px;
+    nav { gap: 10px; }
+  }
+  /* 320px phones leave 280px: name + four links need about 294px at 12px. */
+  @media (max-width: 360px) {
+    font-size: 11px;
+    gap: 10px;
+    nav { gap: 7px; }
+  }
+  /* With study there are five links: below 340px they fit only without
+     the ↗ marks, which the github and mail links drop there. */
+  @media (max-width: 340px) {
+    nav { gap: 6px; }
+    a[target="_blank"]::after, a[href^="mailto:"]::after { display: none; }
+  }
+}
+
+/* Theme button: names the action, not the state. */
+.t-light { display: none; }
+.theme-dark .t-light { display: inline; }
+.theme-dark .t-dark { display: none; }
+
+/* ---- footer: the KERNEL PAN!C mark and one line of links ---- */
+.foot {
+  font-size: 13px;
+  color: var(--mute);
+
+  .wrap { padding-top: 14px; padding-bottom: 32px; }
+
+  .mark {
+    /* 70 cols × 0.625em (Server Mono's advance) = 43.75em must fit the
+       column: (100vw − 40px padding − up to 20px of scrollbar, which 100vw
+       includes) / 44, and at most 16px so the 720px column holds it. Sized
+       for 0.6em it ran wider than its box and overflow clipped the end of
+       the C. clamp(), not min(): Ruby Sass on GitHub Pages evaluates min()
+       itself. */
+    font-size: clamp(5px, calc((100vw - 60px) / 44), 16px);
+    line-height: 1.15;
+    margin: 20px 0 18px;
+    color: var(--fg);
+    white-space: pre;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  p { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+}

@@ -1,0 +1,49 @@
+{%- comment -%}
+  The index, drawn like `tree`: areas, their subjects, and every note. A
+  subject's name picks it on the ring (?field=<id>); a note links to its
+  page. Areas with no subjects are left out; a subject with no notes yet is
+  listed in mute.
+
+  include.notes   notes in index order (notes_in_order)
+{%- endcomment -%}
+{%- assign tr_sids = "" -%}
+{%- for tr_d in include.notes -%}
+  {%- assign tr_parts = tr_d.relative_path | split: "/" -%}
+  {%- assign tr_sids = tr_sids | append: tr_parts[1] | append: "," -%}
+{%- endfor -%}
+{%- assign tr_sid = tr_sids | split: "," -%}
+{%- assign tr_areas = "" | split: "" -%}
+{%- for tr_a in site.data.study.areas -%}
+  {%- assign tr_subs = site.data.study.subjects | where: "area", tr_a.id -%}
+  {%- if tr_subs.size > 0 -%}{%- assign tr_areas = tr_areas | push: tr_a -%}{%- endif -%}
+{%- endfor -%}
+<div class="tree">
+  <div class="ln root"><span class="lb"><span class="tt">study/</span><span class="ct">{{ include.notes.size }}</span></span></div>
+{%- for tr_a in tr_areas -%}
+  {%- assign tr_lasta = forloop.last -%}
+  {%- if tr_lasta -%}{%- assign tr_r1 = "&nbsp;&nbsp;&nbsp;&nbsp;" -%}{%- else -%}{%- assign tr_r1 = "│&nbsp;&nbsp;&nbsp;" -%}{%- endif -%}
+  {%- assign tr_subs = site.data.study.subjects | where: "area", tr_a.id -%}
+  {%- assign tr_n = 0 -%}
+  {%- for tr_s in tr_subs -%}
+    {%- assign tr_c = tr_sid | where_exp: "x", "x == tr_s.id" | size -%}
+    {%- assign tr_n = tr_n | plus: tr_c -%}
+  {%- endfor -%}
+  <div class="ln area"><span class="g" aria-hidden="true">{% if tr_lasta %}└──{% else %}├──{% endif %}&nbsp;</span><span class="lb"><span class="tt">{{ tr_a.name }}</span><span class="en" lang="en">{{ tr_a.en }}</span><span class="ct">{{ tr_n }}</span></span></div>
+  {%- for tr_s in tr_subs -%}
+    {%- assign tr_lasts = forloop.last -%}
+    {%- if tr_lasts -%}{%- assign tr_r2 = "&nbsp;&nbsp;&nbsp;&nbsp;" -%}{%- else -%}{%- assign tr_r2 = "│&nbsp;&nbsp;&nbsp;" -%}{%- endif -%}
+    {%- capture tr_needle -%}_notes/{{ tr_s.id }}/{%- endcapture -%}
+    {%- assign tr_ns = include.notes | where_exp: "d", "d.relative_path contains tr_needle" -%}
+    <div class="ln sub{% if tr_ns.size == 0 %} empty{% endif %}"><span class="g" aria-hidden="true">{{ tr_r1 }}{% if tr_lasts %}└──{% else %}├──{% endif %}&nbsp;</span>
+    {%- if tr_ns.size > 0 -%}
+      <a class="lb" href="{{ '/' | relative_url }}?field={{ tr_s.id }}"><span class="tt">{{ tr_s.name }}</span><span class="en" lang="en">{{ tr_s.en }}</span><span class="ct">{{ tr_ns.size }}</span></a>
+    {%- else -%}
+      <span class="lb"><span class="tt">{{ tr_s.name }}</span><span class="en" lang="en">{{ tr_s.en }}</span><span class="ct">0</span></span>
+    {%- endif -%}
+    </div>
+    {%- for tr_d in tr_ns -%}
+    <div class="ln leaf"><span class="g" aria-hidden="true">{{ tr_r1 }}{{ tr_r2 }}{% if forloop.last %}└──{% else %}├──{% endif %}&nbsp;</span><a class="lb" href="{{ tr_d.url | relative_url }}"><span class="tt">{{ tr_d.short | default: tr_d.title }}</span><span class="sm">{{ tr_d.summary }}</span></a></div>
+    {%- endfor -%}
+  {%- endfor -%}
+{%- endfor -%}
+</div>

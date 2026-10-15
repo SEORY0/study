@@ -1,0 +1,95 @@
+# The map's vocabulary: areas, subjects and threads.
+#
+# areas      group subjects: the index tree, and the ring's sectors. `home:
+#            true` marks the owner's own fields; links from them to the
+#            other fields are drawn darkest, across the middle of the ring.
+# subjects   each holds the notes in _notes/<subject id>/. The ring orders
+#            areas and subjects itself (to keep links short), so the order
+#            here only sets the index tree and breaks ties.
+# threads    an idea that runs through several subjects. A note joins a
+#            thread by listing its id in `threads:`. A thread is a set, not a
+#            route: picking it on the ring lights all its notes at once.
+#            `mark` is set in the figure font: use the glyphs in README.md.
+
+areas:
+  - id: math
+    name: 수학
+    en: Mathematics
+    home: true
+  - id: ee
+    name: 전자
+    en: Electrical Engineering
+    home: true
+  - id: cs
+    name: 컴퓨터
+    en: Computer Science
+  - id: ai
+    name: AI
+    en: Artificial Intelligence
+  - id: sec
+    name: 보안
+    en: Security
+
+subjects:
+  - id: math
+    area: math
+    name: 공학수학
+    en: Engineering Mathematics
+  - id: signals
+    area: ee
+    name: 신호및시스템
+    en: Signals and Systems
+  - id: circuits
+    area: ee
+    name: 회로망해석
+    en: Network Analysis
+  - id: electronics
+    area: ee
+    name: 전자회로
+    en: Electronic Circuits
+  - id: comm
+    area: ee
+    name: 통신
+    en: Communications
+  - id: network
+    area: cs
+    name: 컴퓨터 네트워크
+    en: Computer Networks
+  - id: ml
+    area: ai
+    name: 딥러닝
+    en: Deep Learning
+  - id: hwsec
+    area: sec
+    name: 하드웨어 보안
+    en: Hardware Security
+
+threads:
+  - id: cexp
+    mark: "e^(jωt)"
+    name: 복소지수
+    line: 미분해도 모양이 변하지 않는 함수 하나가 회로를 지나 통신까지 간다
+  - id: conv
+    mark: "x*h"
+    name: 컨볼루션
+    line: 임펄스 응답 하나가 선형 시불변 시스템 전체를 설명한다
+  - id: freq
+    mark: "X(jω)"
+    name: 주파수 영역
+    line: 시간에서 복잡한 신호가 주파수에서는 몇 개의 숫자가 된다
+  - id: pole
+    mark: "H(s)"
+    name: 극점
+    line: 분모가 0이 되는 자리가 시스템의 성격을 정한다
+  - id: fb
+    mark: "A/(1+Aβ)"
+    name: 피드백
+    line: 출력을 되돌려 비교하면 부품의 불완전함이 지워진다
+  - id: lin
+    mark: "dy/dx"
+    name: 선형화
+    line: 충분히 가까이서 보면 비선형도 직선이고, 직선은 곱해서 이어진다
+  - id: sw
+    mark: "CV²f"
+    name: 스위칭 전력
+    line: 전하를 채우고 비우는 데 드는 에너지가 정보를 흘린다

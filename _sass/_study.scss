@@ -1,0 +1,354 @@
+/* ========================================================================== */
+/* Study: the ring (/study/) and the notes (/study/<slug>/).                   */
+/*                                                                            */
+/* The ring is an SVG drawn by assets/js/study-ring.js in the site's own      */
+/* marks: 1px ink lines, one monospace, grey for what steps back. The index   */
+/* and a note's connections are drawn like `tree` on the figure grid (--fig:  */
+/* Server Mono, then Study Mono Fill for the Greek, maths and arrows it      */
+/* lacks); at a line height of 1.25 Server Mono's box glyphs meet.           */
+/* ========================================================================== */
+
+/* Link ink by how far a link travels: same subject, same area, another area
+   on the same side, between the owner's fields and the others. */
+:root { --k0: 0.15; --k1: 0.24; --k2: 0.32; --k3: 0.92; }
+.theme-dark { --k0: 0.17; --k1: 0.26; --k2: 0.34; --k3: 0.9; }
+
+.fig { font-family: var(--fig); }
+
+/* Section labels: the home sheet's row label, set over a rule. */
+.sec-h {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 44px 0 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  small { font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--mute); margin-left: 10px; }
+}
+
+/* ---- the study page: an atlas spread, wider than an article ---- */
+$ring-wide: 960px;
+.page-study .wrap { max-width: 1180px; }
+
+.ring-stage {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  column-gap: 44px;
+  @media (max-width: $ring-wide) {
+    display: flex;
+    flex-direction: column;
+  }
+}
+.ring-side { min-width: 0; display: flex; flex-direction: column; padding-bottom: 8px; }
+.ringmap { position: relative; min-width: 0; padding-top: 28px; }
+.ring-svg { display: block; width: 100%; height: auto; overflow: visible; -webkit-tap-highlight-color: transparent; }
+.ring-measure { position: absolute; left: -9999px; top: 0; width: 10px; height: 10px; visibility: hidden; }
+
+.study-lede {
+  margin-top: 16px;
+  max-width: 62ch;
+  font-size: 14px;
+  line-height: 1.75;
+  em { font-style: normal; background: var(--fg); color: var(--bg); padding: 0 3px; }
+  p + p { margin-top: 10px; }
+}
+
+/* legend, drawn with the ring's own marks */
+.ring-legend {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 3px 10px;
+  align-items: center;
+  font-size: 12px;
+  color: var(--mute);
+  svg { display: block; overflow: visible; color: var(--fg); }
+  .spk { fill: none; stroke: var(--fg); stroke-width: 1; stroke-dasharray: 1 3; stroke-linecap: round; }
+}
+
+.ring-sec {
+  margin-top: 26px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.ring-threads {
+  margin-top: 6px;
+  button {
+    display: grid;
+    grid-template-columns: 9.5ch 1fr auto;
+    column-gap: 12px;
+    width: 100%;
+    padding: 1px 6px;
+    margin: 0 -6px;
+    width: calc(100% + 12px);
+    font-size: 13px;
+    line-height: 1.8;
+    text-align: left;
+  }
+  .mk { font-family: var(--fig); white-space: nowrap; }
+  .n { color: var(--mute); font-variant-numeric: tabular-nums; }
+  button:hover, button.on { background: var(--fg); color: var(--bg); }
+  button:hover .n, button.on .n { color: var(--bg); }
+}
+
+/* the note, thread or field under the pointer */
+.ring-info {
+  margin-top: 24px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  .crumb { font-size: 12px; color: var(--mute); }
+  h2 { margin-top: 4px; font-family: var(--sans); font-size: 19px; line-height: 1.35; font-weight: 700; }
+  .sum { margin-top: 8px; font-family: var(--sans); font-size: 14px; line-height: 1.7; }
+  .tags { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .box { font-family: var(--fig); }
+  .meta { margin-top: 10px; font-size: 12px; color: var(--mute); line-height: 1.7; }
+  .meta b { color: var(--fg); font-weight: 400; }
+  .go { display: inline-block; margin-top: 10px; font-size: 13px; }
+  .idle { font-size: 13px; line-height: 1.75; color: var(--mute); }
+  .x { display: none; }
+}
+
+/* ---- the ring ---- */
+.ring-svg text { font-family: var(--mono); }
+.ring-arc { fill: none; stroke: var(--fg); stroke-width: 1; }
+.lnk { fill: none; stroke: var(--fg); stroke-width: 1; stroke-linecap: round; }
+.lnk.c0 { stroke-opacity: var(--k0); }
+.lnk.c1 { stroke-opacity: var(--k1); }
+.lnk.c2 { stroke-opacity: var(--k2); }
+.lnk.c3 { stroke-opacity: var(--k3); stroke-width: 1.25; }
+
+.ring-svg {
+  .note { cursor: pointer; outline: none; text-decoration: none; }
+  a, a:hover { text-decoration: none; background: none; }
+  .note .hit { fill: transparent; }
+  .note .dot { fill: var(--fg); }
+  .note .lab { fill: var(--fg); }
+  .note .inv { fill: var(--fg); opacity: 0; }
+  .note.hot .inv, .note.here .inv { opacity: 1; }
+  .note.hot .lab, .note.here .lab { fill: var(--bg); }
+  .note:focus-visible .inv { opacity: 1; }
+  .note:focus-visible .lab { fill: var(--bg); }
+
+  .sub { fill: var(--mute); cursor: pointer; }
+  .area-line { fill: none; stroke: var(--mute); stroke-width: 1; }
+  .divider { fill: none; stroke: var(--mute); stroke-width: 1; stroke-opacity: 0.55; }
+  .divider.sd { stroke-dasharray: 1 3; stroke-opacity: 0.8; }
+  .area { fill: var(--fg); cursor: pointer; letter-spacing: 0.16em; }
+  .sub:hover, .sub.on { fill: var(--fg); }
+  .sub:focus-visible, .area:focus-visible { outline: none; fill: var(--fg); text-decoration: underline; }
+
+  .hub { opacity: 0; pointer-events: none; cursor: pointer; }
+  .hub text { fill: var(--mute); paint-order: stroke; stroke: var(--bg); stroke-width: 5px; stroke-linejoin: round; font-family: var(--fig); }
+  .spk { fill: none; stroke: var(--fg); stroke-width: 1; stroke-dasharray: 1 3; stroke-linecap: round; stroke-opacity: 0; }
+
+  .lnk, .note, .hub, .spk, .sub, .area, .area-line, .ring-arc, .divider { transition: opacity 0.12s, stroke-opacity 0.12s, fill 0.12s; }
+
+  /* something picked: everything else steps back */
+  &.dim .lnk { stroke-opacity: 0.045; }
+  &.dim .lnk.on { stroke-opacity: 1; }
+  &.dim .note { opacity: 0.26; }
+  &.dim .note.on, &.dim .note.nb, &.dim .note.here { opacity: 1; }
+  &.dim .hub.on { opacity: 1; pointer-events: auto; }
+  &.dim .hub.on text { fill: var(--fg); }
+  &.dim .spk.on { stroke-opacity: 0.85; }
+  &.dim .sub, &.dim .area, &.dim .area-line, &.dim .divider { opacity: 0.35; }
+  &.dim .sub.on, &.dim .area.on { opacity: 1; fill: var(--fg); }
+  &.dim .area-line.on { opacity: 1; }
+  &.dim .ring-arc { opacity: 0.35; }
+  &.dim .ring-arc.on { opacity: 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lnk, .note, .hub, .spk, .sub, .area, .area-line, .ring-arc, .divider { transition: none; }
+  }
+}
+
+/* pan and zoom, only when the ring has outgrown the screen */
+.ringmap .zoom { display: none; position: absolute; right: 0; top: 8px; z-index: 2; }
+.ringmap.zooms .zoom { display: flex; }
+.ringmap.zooms .ring-svg { touch-action: none; cursor: grab; overflow: hidden; outline: 1px solid var(--mute); outline-offset: -1px; }
+.ringmap.zooms-touch .ring-svg { touch-action: pan-y; }
+.ringmap .zoom button { min-width: 34px; height: 30px; padding: 0 9px; border: 1px solid var(--fg); margin-left: -1px; background: var(--bg); font-size: 13px; text-align: center; }
+.ringmap .zoom button:hover { background: var(--fg); color: var(--bg); }
+
+/* phones: the note panel becomes a sheet that rises from the bottom when a
+   note is tapped (the second tap opens the note) */
+@media (max-width: 759px) {
+  .ringmap { margin: 6px -8px 0; padding-top: 0; }
+  .ring-head { order: 1; }
+  .ring-info {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 5;
+    margin: 0;
+    padding: 14px 20px calc(16px + env(safe-area-inset-bottom));
+    background: var(--bg);
+    border-top: 1px solid var(--line);
+    max-height: 46vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    transform: translateY(105%);
+    transition: transform 0.15s ease-out;
+    &.open { transform: none; }
+    .idle { display: none; }
+    h2 { font-size: 17px; padding-right: 40px; }
+    .x { display: block; position: absolute; right: 10px; top: 8px; width: 36px; height: 36px; text-align: center; font-size: 16px; }
+    .x:hover { background: var(--fg); color: var(--bg); }
+    @media (prefers-reduced-motion: reduce) { transition: none; }
+  }
+}
+@media (max-width: $ring-wide) {
+  /* one column: the ring right under the lede, then legend and threads */
+  .ring-side { display: contents; }
+  .ring-head { order: 1; }
+  .ringmap { order: 2; }
+  .ring-legend { order: 3; }
+  .ring-sec { order: 4; }
+  .ring-threads { order: 5; }
+  .ring-info { order: 6; }
+}
+
+/* ---- the index, and a note's connections: drawn like `tree` ---- */
+.index .tree { margin-top: 18px; }
+.tree {
+  font-family: var(--fig);
+  font-size: 14px;
+  line-height: 1.25;
+
+  .ln { display: flex; align-items: baseline; height: 1.25em; white-space: pre; }
+  .g { flex: none; }
+  .lb {
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 0 1.5ch;
+    align-items: baseline;
+    margin-left: 0.5ch;
+    font-family: var(--mono);
+    color: var(--fg);
+    text-decoration: none;
+  }
+  a.lb:hover { background: var(--fg); color: var(--bg); }
+  .tt { white-space: nowrap; }
+  .en, .sm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--mute); font-size: 12px; }
+  .sm { flex: 1 1 auto; min-width: 0; }
+  .ct { margin-left: auto; padding-left: 1ch; color: var(--mute); font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  a.lb:hover .en, a.lb:hover .ct, a.lb:hover .sm { color: var(--bg); }
+  .root .lb { margin-left: 0; }
+  .root .tt, .area .tt { font-weight: 700; }
+  .empty .lb { color: var(--mute); }
+
+  @media (max-width: $bp-mobile) {
+    font-size: 13px;
+    .en, .sm { display: none; }
+  }
+}
+
+/* ---- a note ---- */
+.note-head {
+  .crumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 0.6ch;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: var(--mute);
+    a { color: var(--fg); text-decoration: none; }
+    a:hover { background: var(--fg); color: var(--bg); }
+    .pos { margin-left: 1ch; font-variant-numeric: tabular-nums; }
+    .date { margin-left: auto; font-variant-numeric: tabular-nums; }
+  }
+  .note-sum {
+    margin-top: 10px;
+    max-width: 40em;
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--mute);
+    @media (max-width: $bp-mobile) { font-size: 15px; }
+  }
+}
+
+/* the threads a note is on: each picks that thread on the ring */
+.chips {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  .chip { font-size: 12px; }
+  .mk { font-family: var(--fig); font-weight: 700; }
+  .n { color: var(--mute); margin-left: 2px; }
+  .chip:hover .n { color: var(--bg); }
+}
+
+/* Figures and equations inside a note: drawn on the --fig grid. Kramdown
+   leaves these fences as a bare pre (classed fig-ascii / fig-eq by the
+   layout); the Rouge-wrapped shape is covered too. */
+.note-content {
+  .language-ascii, .language-eq { margin: 1.6em 0; }
+  pre.fig-ascii, pre.fig-eq,
+  .language-ascii pre, .language-eq pre {
+    font-family: var(--fig);
+    font-size: 14px;
+    line-height: 1.25;
+    color: var(--fg);
+    background: none;
+    code { font-family: inherit; }
+  }
+  pre.fig-ascii, .language-ascii pre { margin: 1.6em 0; padding: 16px 18px; border: 1px solid var(--line); }
+  .language-ascii pre { margin: 0; }
+  /* Phones: a figure runs to the screen edges (rules above and below
+     only), so a 56-column drawing still fits at 375px. */
+  @media (max-width: $bp-mobile) {
+    pre.fig-ascii, .language-ascii pre {
+      margin-left: -20px;
+      margin-right: -20px;
+      padding: 14px 12px;
+      border-left: 0;
+      border-right: 0;
+    }
+  }
+  pre.fig-eq, .language-eq pre {
+    width: fit-content;
+    max-width: 100%;
+    margin: 1.4em auto;
+    padding: 2px 0;
+    border: 0;
+    font-size: 15px;
+  }
+  .language-eq pre { margin: 0 auto; }
+  .fig-cap { margin-top: -0.9em; font-family: var(--mono); font-size: 13px; color: var(--mute); }
+}
+
+/* a note's connections: the ring resting on this note, then the list */
+.connections { margin-top: 56px; }
+.note-ring { display: block; }
+.note-ring .ringmap { padding-top: 12px; margin: 0; }
+.cn-tree { margin-top: 18px; }
+
+.pager {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 44px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+/* ---- 404 ---- */
+.not-found {
+  padding-top: 48px;
+  h1 { font-size: 15px; font-weight: 700; }
+  p { color: var(--mute); margin-top: 12px; max-width: 60ch; }
+  nav { margin-top: 20px; display: flex; gap: 14px; flex-wrap: wrap; }
+}

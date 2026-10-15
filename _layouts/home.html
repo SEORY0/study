@@ -1,0 +1,50 @@
+---
+layout: compress
+---
+<!DOCTYPE html>
+<html lang="ko">
+{% include head.html %}
+<body class="page-study">
+<a href="#main-content" class="skip-to-content">Skip to content</a>
+
+{% include top-nav.html %}
+
+<main class="wrap study" id="main-content">
+{%- include ordered.html -%}
+{%- comment -%}
+  The ring (assets/js/study-ring.js) draws from graph.json. Without
+  JavaScript the stage shows the lede and the index below lists every note.
+{%- endcomment -%}
+  <div class="ring-stage" data-ring="full" data-graph="{{ '/graph.json' | relative_url }}">
+    <div class="ring-side">
+      <div class="ring-head">
+        <h1 class="page-h">Study <small data-count>{{ notes_in_order.size }} notes · {{ site.data.study.threads.size }} threads</small></h1>
+        <div class="study-lede">{{ content }}</div>
+      </div>
+      <div class="ring-legend" aria-hidden="true">
+        <svg width="40" height="14" viewBox="0 0 40 14"><path class="ring-arc" d="M2,12 A44,44 0 0 1 38,12"/><circle cx="20" cy="8.3" r="2.8" fill="currentColor"/></svg><span>노트 · 둘레의 호가 과목</span>
+        <svg width="40" height="14" viewBox="0 0 40 14"><path class="lnk c1" style="stroke-opacity:.45" d="M2,4 C12,12 28,12 38,4"/></svg><span>가까운 노트끼리의 연결</span>
+        <svg width="40" height="14" viewBox="0 0 40 14"><path class="lnk c3" d="M2,12 C14,-2 26,16 38,2"/></svg><span>먼 분야를 건너는 연결</span>
+        <svg width="40" height="14" viewBox="0 0 40 14"><path class="spk" style="stroke-opacity:.9" d="M4,7 L36,7"/></svg><span>실 · 여러 과목을 꿰는 개념</span>
+      </div>
+      <h2 class="ring-sec" id="threads-h">Threads</h2>
+      <ul class="ring-threads" aria-labelledby="threads-h"></ul>
+      <aside class="ring-info" aria-live="polite"></aside>
+    </div>
+    <div class="ringmap">
+      <svg class="ring-svg" role="group" aria-label="노트 지도: 둘레에 과목별로 노트, 안쪽 곡선이 노트 사이의 연결"></svg>
+      <noscript><p class="m">지도는 자바스크립트로 그린다. 아래 Index에 모든 노트가 있다.</p></noscript>
+    </div>
+  </div>
+
+  <section class="index" aria-labelledby="index-h">
+    <h2 class="sec-h" id="index-h">Index</h2>
+    {% include tree.html notes=notes_in_order %}
+  </section>
+</main>
+
+{% include footer.html %}
+<script defer src="{{ '/assets/js/study-ring.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
+{% include scripts.html %}
+</body>
+</html>
