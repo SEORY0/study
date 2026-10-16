@@ -1,6 +1,13 @@
 # study: SEORY0's study notes, served at https://seory0.github.io/study/
 # by GitHub Pages (Deploy from a branch: main, / root). How a note is
-# written and how the map is drawn: README.md.
+# written and how the map is drawn: site/README.md.
+#
+#   studies/<subject>/<slug>.md  the notes, one folder per subject
+#   site/                        layouts, includes, styles, scripts, fonts,
+#                                the map's vocabulary (site/_data/study.yml)
+#   tools/                       lint, the README index, font and card builders
+#
+# This file stays at the root: GitHub Pages builds from here.
 
 title: "study"
 description: "전자공학과 IT를 공부하며 쓰는 노트. 한 과목에서 배운 개념이 다른 과목에서 다시 나타나는 자리를 이어 그린 지도."
@@ -14,8 +21,8 @@ author:
   email: seory0@outlook.kr
   url: "https://seory0.github.io"
 
-# The share card, 1200 x 630, drawn by docs/og-image.py.
-og_image: "/assets/og.png"
+# The share card, 1200 x 630, drawn by tools/og-image.py.
+og_image: "/site/assets/og.png"
 og_image_alt: "study: an ASCII map of study notes, subjects as lanes and notes as dots"
 
 markdown: kramdown
@@ -28,27 +35,26 @@ kramdown:
 
 permalink: pretty
 
-# Notes: _notes/<subject>/<slug>.md -> /study/<slug>/. Subjects, areas and
-# threads live in _data/study.yml.
-collections:
-  notes:
-    output: true
-    permalink: /:name/
+layouts_dir: site/_layouts
+includes_dir: site/_includes
+data_dir: site/_data
 
+# Notes: studies/<subject>/<slug>.md -> /study/<slug>/. Subjects, areas and
+# threads live in site/_data/study.yml.
 defaults:
   -
     scope:
-      path: ""
-      type: "notes"
+      path: "studies"
     values:
       layout: "note"
+      permalink: /:basename/
 
 compress_html:
   clippings: all
   comments: ["<!-- ", " -->"]
 
 sass:
-  sass_dir: _sass
+  sass_dir: site/_sass
   style: :compressed
 
 plugins:
@@ -57,9 +63,10 @@ plugins:
 exclude:
   - .claude
   - .jekyll-cache
-  - docs
+  - tools
   - vendor
   - Gemfile
   - Gemfile.lock
   - README.md
+  - site/README.md
   - CLAUDE.md

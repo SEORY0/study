@@ -1,0 +1,21 @@
+{%- comment -%}
+  Every note, one plain list per subject (subjects in site/_data/study.yml
+  order). Subjects with no notes are left out.
+
+  include.notes   notes in index order (notes_in_order)
+{%- endcomment -%}
+<section class="index" aria-label="Index">
+{%- for ix_s in site.data.study.subjects -%}
+  {%- capture ix_needle -%}studies/{{ ix_s.id }}/{%- endcapture -%}
+  {%- assign ix_ns = include.notes | where_exp: "d", "d.path contains ix_needle" -%}
+  {%- if ix_ns.size == 0 -%}{%- continue -%}{%- endif -%}
+  <div class="index-group">
+    <h2>{{ ix_s.name }} <span class="cnt">{{ ix_ns.size }}</span></h2>
+    <ul class="index-list">
+    {%- for ix_d in ix_ns -%}
+      <li><span class="dot" aria-hidden="true">·</span><a href="{{ ix_d.url | relative_url }}">{{ ix_d.title }}</a></li>
+    {%- endfor -%}
+    </ul>
+  </div>
+{%- endfor -%}
+</section>

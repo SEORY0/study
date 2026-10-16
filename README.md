@@ -1,141 +1,75 @@
-# study
+## study.
 
-전자공학과 IT를 공부하며 쓰는 노트. https://seory0.github.io/study/
+```
+전자공학과 IT를 공부하며 쓰는 노트.
 
 한 과목에서 배운 개념은 다른 과목에서 다시 나타난다. 신호및시스템의 복소지수가
 회로망해석의 페이저로, 전자회로의 주파수 응답으로, 다시 통신과 AI와 보안으로.
-이 사이트는 그 연결을 하나의 원 위에 그린다.
-
-- 모든 노트가 원 둘레에 과목별로, 과목은 분야(area)별로 모여 앉는다.
-- 노트 사이의 링크는 원 안쪽을 지나는 곡선이다. 같은 과목끼리는 둘레 가까이에,
-  전공(`home: true` 분야)과 다른 분야를 잇는 링크는 가운데를 가로지르는 가장 진한
-  선이 된다. 원에는 시작과 끝이 없어서 어떤 연결도 순서로 읽히지 않는다.
-- 노트, 과목, 분야, 실(thread)을 가리키면 이어진 것만 남고, 제목 아래 두 줄에
-  그 내용이 뜬다. 누르면 고정되고, 노트는 한 번 더 누르면 열린다(휴대폰에서는 첫
-  탭에 아래에서 요약이 올라온다).
-- 지도 아래에는 과목마다 노트 목록이 있다. 노트 페이지에는 같은 원이 그 노트를
-  짚은 채로 그려지고, 이어진 노트 목록이 붙는다.
-
-디자인은 [seory0.github.io](https://seory0.github.io)를 따른다: 흰 바탕, 검은 선,
-고정폭 글꼴 하나, 장식 없음.
-
-## 노트 추가하기
-
-1. `_notes/<과목 id>/<slug>.md`를 만든다. 폴더가 과목이고 파일 이름이 주소다
-   (`/study/<slug>/`). slug는 과목이 달라도 겹치면 안 된다.
-2. front matter는 이 키들을 이 순서로:
-
-   ```yaml
-   ---
-   title: 페이저
-   short: 페이저              # 지도에 쓰는 이름, 한글 10자 이내
-   order: 3                   # 과목 안에서의 순서
-   summary: 정현파 정상상태에서는 미분이 jω 곱셈이 되어 미분방정식이 복소수 계산이 된다
-   threads: [cexp]            # _data/study.yml의 실 id, 없으면 []
-   date: 2026-10-15
-   ---
-   ```
-
-3. 본문 마지막 절은 `## 이어지는 곳`: 같은 실의 앞뒤 노트와 무엇이 이어지는지
-   (같은 식, 같은 가정, 같은 메커니즘) 쓴다.
-4. 검사: `python docs/lint.py` (오류 0개여야 한다).
-
-`order`는 과목 안에서 노트 목록과 이전/다음 버튼의 순서다. 노트 사이를 잇는 것은
-본문의 링크(`[페이저](/study/phasor/)`)와 `threads:`다.
-
-## 분야, 과목, 실
-
-`_data/study.yml`에 있다.
-
-- `areas`: 분야(수학, 전자, 컴퓨터, AI, 보안 ...). 원의 큰 구역이다.
-  `home: true`는 내 전공 분야라는 표시: 전공과 다른 분야를 잇는 링크가 가장 진하게
-  그려진다.
-- `subjects`: 과목. 새 과목은 여기에 한 줄(`id`, `area`, `name`, `en`)을 넣고
-  `_notes/<id>/` 폴더를 만든다. 원 위의 순서는 링크가 짧아지게 자동으로 정해지고,
-  이 목록의 순서는 아래 노트 목록과 동점일 때만 쓰인다.
-- `threads`: 여러 과목을 지나는 개념. 노트의 `threads:`에 id를 넣으면 그 실에
-  올라간다. 실은 순서가 없는 묶음이다: 고르면 그 노트들이 한꺼번에 켜진다.
-  `mark`는 그림 글꼴로 그려지므로 아래 글리프만 쓴다.
-
-## 그림과 수식
-
-손으로 그리는 두 가지 블록이 있다.
-
-````
-```ascii
-x(t) ──▶┌──────┐──▶ y(t)
-        │ h(t) │
-        └──────┘
+이 저장소는 그 노트를 과목별로 모으고, 사이트는 그 연결을 하나의 원 위에 그린다.
 ```
 
-그림. 바로 다음 문단이 그림.으로 시작하면 캡션이 된다
+지도: https://seory0.github.io/study/ · 노트 쓰는 법: [site/README.md](site/README.md)
 
-```eq
-         1
-H(jω) = ──────────
-        1 + jωRC
-```
-````
+<!-- 아래 목록은 python tools/readme.py가 studies/에서 만든다. 손으로 고치지 않는다. -->
 
-`ascii`는 테두리 있는 그림, `eq`는 가운데 놓이는 수식이다. 좁은 화면에서는 그림이 화면 끝까지 넓어지고 칸에
-맞게 줄어들며(9.5px까지), 그보다 넓으면 옆으로 스크롤된다. 56칸 이하로 그린다.
+#### Engineering Mathematics
 
-격자가 맞으려면 블록 안에서는 다음 글리프만 쓴다(린트가 검사한다).
+- [오일러 공식](https://seory0.github.io/study/euler/)
+- [선형 미분방정식](https://seory0.github.io/study/ode/)
 
-- 출력 가능한 ASCII 전부
-- 상자 선 `─│┌┐└┘├┤┬┴┼╭╮╰╯═║╔╗╚╝╠╣╦╩╬━┃┏┓┗┛┣┫┳┻╋╌╎┄┆`
-- `▶◀▲▼●○•·■□←→↑↓↔⇒`, 블록 `▁▂▃▄▅▆▇█░▒▓`, 위/아래 첨자 숫자
-- 그리스 문자 `αβγδεζηθικλμνξοπρστυφχψω ΓΔΘΛΠΣΦΨΩ`
-- 수학 기호 `∫∑∏√∞≈≠≤≥±×÷∠∂∇∘−∈≡°′`
+---
 
-한글은 고정폭이 아니다: `ascii` 줄의 맨 끝(라벨)에만 쓰고, `eq`에는 쓰지 않는다.
-본문 수식은 유니코드와 `<sup>`/`<sub>`로 (`e<sup>jωt</sup>`), 컨볼루션은 `∗`
-(U+2217, `*`는 마크다운 강조가 된다). `{{`, `{%`, `$$`, 엠 대시(—)와 엔 대시(–)는
-쓰지 않는다.
+#### Signals and Systems
 
-## 미리보기
+- [선형 시불변 시스템](https://seory0.github.io/study/lti/)
+- [컨볼루션](https://seory0.github.io/study/convolution/)
+- [복소지수와 고유함수](https://seory0.github.io/study/eigenfunction/)
+- [푸리에 급수](https://seory0.github.io/study/fourier-series/)
+- [푸리에 변환](https://seory0.github.io/study/fourier-transform/)
+- [라플라스 변환과 전달함수](https://seory0.github.io/study/laplace/)
+- [샘플링 정리](https://seory0.github.io/study/sampling/)
 
-```
-bundle install
-bundle exec jekyll serve
-```
+---
 
-http://localhost:4000/study/ 에서 열린다. `Gemfile`은 GitHub Pages와 같은
-`github-pages` 젬(Jekyll 3.10)을 쓴다.
+#### Network Analysis
 
-## 배포
+- [중첩의 원리와 테브난 등가](https://seory0.github.io/study/thevenin/)
+- [RC 회로의 과도응답](https://seory0.github.io/study/rc-transient/)
+- [페이저](https://seory0.github.io/study/phasor/)
+- [임피던스](https://seory0.github.io/study/impedance/)
+- [RLC 공진](https://seory0.github.io/study/resonance/)
 
-GitHub Pages, Deploy from a branch: `main`, `/ (root)`. 푸시하면 지도가 다시
-그려진다. 플러그인도 빌드 단계도 없다. 메인 사이트(SEORY0.github.io)의 상단
-메뉴 `study`가 이 사이트로 온다.
+---
 
-## 지도가 그려지는 방식
+#### Electronic Circuits
 
-- `graph.json`(Jekyll이 빌드할 때 만든다)에 분야, 과목, 실, 노트, 링크가 들어 있다.
-  링크는 노트 본문에 있는 `/study/<slug>/` 경로다.
-- `assets/js/study-ring.js`가 그것을 받아 SVG로 그린다. 배치는 매번 같다(난수
-  없음): 링크가 짧아지도록 분야, 과목, 노트의 순서를 고르고(6개 이하는 모든 순서,
-  그보다 많으면 이웃끼리 바꾸기), 이름표가 겹치지 않는 가장 큰 반지름을 찾는다.
-  링크는 Holten의 계층적 엣지 번들링으로 노트, 과목, 분야, 전공 여부, 중심을 거쳐
-  휘어진다. 노트가 수백 개가 되어 이름표가 한 줄 간격보다 좁아지면 원이 화면보다
-  커지고, 휠이나 손가락으로 확대하고 끌어서 본다.
-- 주소 뒤에 `?thread=<id>`, `?field=<과목 id>`, `?area=<분야 id>`, `?focus=<slug>`를
-  붙이면 그것을 고른 채로 열린다. `?check=1`은 겹친 이름표를 `<html>`의
-  `data-collisions`에 적는다(노트를 추가한 뒤 확인용).
-- 자바스크립트가 없으면 원 대신 아래 노트 목록이 모든 노트를 보여준다.
+- [소신호 모델](https://seory0.github.io/study/small-signal/)
+- [주파수 응답과 보드 선도](https://seory0.github.io/study/bode/)
+- [연산증폭기와 부귀환](https://seory0.github.io/study/opamp/)
+- [CMOS 인버터](https://seory0.github.io/study/cmos/)
 
-`_includes/ordered.html`은 모든 노트를 순서대로(`notes_in_order`),
-`_includes/index.html`은 과목별 노트 목록을 그린다. 노트 페이지는 `_layouts/note.html`,
-스타일은 `_sass/_study.scss`.
+---
 
-## 글꼴
+#### Communications
 
-- Server Mono (Internet Development Studio Company, SIL OFL 1.1): 고정폭 전부.
-- Study Mono Fill: Server Mono에 없는 그리스 문자, 수학 기호, 화살표, `^`를
-  JetBrains Mono NL(SIL OFL 1.1)에서 가져와 Server Mono의 폭과 높이에 맞춘 3.8 kB
-  부분 글꼴. `∠`는 직접 그렸다. 글리프를 늘리려면
-  `python docs/build-fill-font.py`(fontTools, brotli, JetBrains Mono NL 필요)로
-  다시 만들고 `assets/fonts/study-mono-fill/font.css`의 `unicode-range`,
-  위 목록, `docs/lint.py`를 함께 고친다.
-- Pretendard (Portfolio Sans로 이름 바꾼 부분 글꼴 포함, SIL OFL 1.1): 본문과 한글.
-- IBM Plex Mono (SIL OFL 1.1): 대체 글꼴.
+- [OFDM](https://seory0.github.io/study/ofdm/)
+- [디지털 오디오와 앨리어싱](https://seory0.github.io/study/digital-audio/)
+
+---
+
+#### Computer Networks
+
+- [TCP 혼잡 제어](https://seory0.github.io/study/tcp/)
+
+---
+
+#### Deep Learning
+
+- [CNN의 합성곱](https://seory0.github.io/study/cnn/)
+- [역전파와 연쇄법칙](https://seory0.github.io/study/backprop/)
+
+---
+
+#### Hardware Security
+
+- [전력 분석 공격](https://seory0.github.io/study/power-analysis/)
