@@ -1,0 +1,17 @@
+{%- comment -%}
+  Sets `notes_in_order`: every note in map order, subject by subject in the
+  order of site/_data/study.yml, then by each note's `order`. A note is a
+  page under studies/ and its subject is its folder:
+  studies/<subject>/<slug>.md.
+
+  Jekyll rebuilds a page's fields on every lookup, so each page is read
+  once into a plain hash (map: "to_liquid") and every loop over the notes
+  reads those; one grouping pass then splits them by folder.
+{%- endcomment -%}
+{%- assign notes_groups = site.pages | map: "to_liquid" | where_exp: "d", "d.layout == 'note'" | sort: "order" | group_by_exp: "d", "d.path | remove_first: 'studies/' | split: '/' | first" -%}
+{%- assign notes_in_order = "" | split: "" -%}
+{%- for s in site.data.study.subjects -%}
+  {%- for g in notes_groups -%}
+    {%- if g.name == s.id -%}{%- assign notes_in_order = notes_in_order | concat: g.items -%}{%- endif -%}
+  {%- endfor -%}
+{%- endfor -%}

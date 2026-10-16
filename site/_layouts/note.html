@@ -1,0 +1,119 @@
+---
+layout: compress
+---
+<!DOCTYPE html>
+<html lang="ko">
+{% include head.html %}
+<body class="page-note">
+<a href="#main-content" class="skip-to-content">Skip to content</a>
+
+{% include top-nav.html %}
+
+<main class="wrap" id="main-content" tabindex="-1">
+{%- include ordered.html -%}
+{%- assign nt_parts = page.path | split: "/" -%}
+{%- assign nt_slug = page.name | remove: ".md" -%}
+{%- assign nt_subject = site.data.study.subjects | where: "id", nt_parts[1] | first -%}
+{%- assign nt_area = site.data.study.areas | where: "id", nt_subject.area | first -%}
+{%- capture nt_needle -%}studies/{{ nt_subject.id }}/{%- endcapture -%}
+{%- assign nt_peers = notes_in_order | where_exp: "d", "d.path contains nt_needle" -%}
+{%- assign nt_at = 0 -%}
+{%- for d in nt_peers -%}{%- if d.url == page.url -%}{%- assign nt_at = forloop.index -%}{%- endif -%}{%- endfor -%}
+{%- assign nt_i = -1 -%}
+{%- for d in notes_in_order -%}{%- if d.url == page.url -%}{%- assign nt_i = forloop.index0 -%}{%- endif -%}{%- endfor -%}
+{%- assign nt_prev = nil -%}
+{%- assign nt_next = nil -%}
+{%- if nt_i > 0 -%}{%- assign nt_pi = nt_i | minus: 1 -%}{%- assign nt_prev = notes_in_order[nt_pi] -%}{%- endif -%}
+{%- assign nt_ni = nt_i | plus: 1 -%}
+{%- if nt_ni < notes_in_order.size -%}{%- assign nt_next = notes_in_order[nt_ni] -%}{%- endif -%}
+{%- comment -%}
+  Connected notes: the ones this note links to (its text, split on
+  "/study/") and the ones that link to it (their text names this page).
+  A note's text is Markdown or, once rendered, HTML; the path reads the
+  same in both. Kept as "area:index;" pairs to group them by area below.
+{%- endcomment -%}
+{%- capture nt_href -%}{{ page.url | relative_url }}{%- endcapture -%}
+{%- assign nt_out = "," -%}
+{%- assign nt_bits = content | split: "/study/" -%}
+{%- for nt_bit in nt_bits offset: 1 -%}
+  {%- assign nt_to = nt_bit | split: "/" | first -%}
+  {%- assign nt_out = nt_out | append: nt_to | append: "," -%}
+{%- endfor -%}
+{%- assign nt_cn = "" -%}
+{%- assign nt_cnt = 0 -%}
+{%- for d in notes_in_order -%}
+  {%- if d.url == page.url -%}{%- continue -%}{%- endif -%}
+  {%- capture nt_key -%},{{ d.name | remove: ".md" }},{%- endcapture -%}
+  {%- if nt_out contains nt_key or d.content contains nt_href -%}
+    {%- assign nt_dp = d.path | split: "/" -%}
+    {%- assign nt_ds = site.data.study.subjects | where: "id", nt_dp[1] | first -%}
+    {%- assign nt_cn = nt_cn | append: nt_ds.area | append: ":" | append: forloop.index0 | append: ";" -%}
+    {%- assign nt_cnt = nt_cnt | plus: 1 -%}
+  {%- endif -%}
+{%- endfor -%}
+  <article class="note">
+    <header class="post-head note-head">
+      <p class="crumb"><a href="{{ '/' | relative_url }}">study</a>{% if nt_area %}<span aria-hidden="true"> / </span><a href="{{ '/' | relative_url }}?area={{ nt_area.id }}">{{ nt_area.name }}</a>{% endif %}<span aria-hidden="true"> / </span><a href="{{ '/' | relative_url }}?field={{ nt_subject.id }}">{{ nt_subject.name }}</a> <span class="pos">{{ nt_at }}/{{ nt_peers.size }}</span><span class="date">{{ page.date | date: "%Y-%m-%d" }}</span></p>
+      <h1 class="post-title">{{ page.title }}</h1>
+      {%- if page.summary %}<p class="note-sum">{{ page.summary }}</p>{% endif -%}
+      {%- if page.threads.size > 0 %}
+      <p class="chips">
+        {%- for t in page.threads -%}
+          {%- assign th = site.data.study.threads | where: "id", t | first -%}
+          {%- assign st = notes_in_order | where_exp: "d", "d.threads contains t" -%}
+          <a class="box chip" href="{{ '/' | relative_url }}?thread={{ t }}" title="{{ th.line }}"><span class="mk">{{ th.mark }}</span> {{ th.name }} <span class="n">{{ st.size }}</span></a>
+        {%- endfor -%}
+      </p>
+      {%- endif %}
+    </header>
+
+    <div class="post-content note-content">
+{%- comment -%}
+  Kramdown leaves ```ascii and ```eq (no Rouge lexer for them) as a bare
+  <pre><code>; the pre gets a class so the figure styles and study-fit.js
+  find it. A paragraph that starts with 그림. is a caption.
+{%- endcomment %}
+      {{ content
+        | replace: '<pre><code class="language-ascii">', '<pre class="fig-ascii"><code class="language-ascii">'
+        | replace: '<pre><code class="language-eq">', '<pre class="fig-eq"><code class="language-eq">'
+        | replace: '<p>그림.', '<p class="fig-cap">그림.' }}
+    </div>
+
+    {%- if nt_cnt > 0 %}
+    <section class="connections" aria-labelledby="cn-h">
+      <h2 class="sec-h" id="cn-h"><span>Connections <small>{{ nt_cnt }}</small></span></h2>
+      <div class="ring-stage note-ring" data-ring="note" data-graph="{{ '/graph.json' | relative_url }}" data-focus="{{ nt_slug }}">
+        <div class="ringmap"><svg class="ring-svg" role="group" aria-label="이 노트와 이어진 노트를 둘레에 그린 지도"></svg></div>
+      </div>
+      <ul class="index-list cn-list">
+      {%- assign nt_items = nt_cn | split: ";" -%}
+      {%- for a in site.data.study.areas -%}
+        {%- for it in nt_items -%}
+          {%- assign nt_kv = it | split: ":" -%}
+          {%- if nt_kv[0] != a.id -%}{%- continue -%}{%- endif -%}
+          {%- assign nt_idx = nt_kv[1] | plus: 0 -%}
+          {%- assign d = notes_in_order[nt_idx] -%}
+          {%- assign nt_dp = d.path | split: "/" -%}
+          {%- assign nt_ds = site.data.study.subjects | where: "id", nt_dp[1] | first -%}
+        <li><span class="dot" aria-hidden="true">·</span><a href="{{ d.url | relative_url }}">{{ d.title }}</a><span class="m">{{ nt_ds.name }}</span></li>
+        {%- endfor -%}
+      {%- endfor -%}
+      </ul>
+    </section>
+    {%- endif %}
+
+    <nav class="pager" aria-label="Notes">
+      {%- if nt_prev %}<a class="box prev" href="{{ nt_prev.url | relative_url }}" rel="prev"><span aria-hidden="true">← </span>{{ nt_prev.short | default: nt_prev.title }}</a>{% endif -%}
+      <a class="box soft" href="{{ '/' | relative_url }}">map</a>
+      {%- if nt_next %}<a class="box next" href="{{ nt_next.url | relative_url }}" rel="next">{{ nt_next.short | default: nt_next.title }}<span aria-hidden="true"> →</span></a>{% endif -%}
+    </nav>
+  </article>
+</main>
+
+{% include footer.html %}
+<script src="{{ '/site/assets/js/code-copy.js' | relative_url }}"></script>
+<script src="{{ '/site/assets/js/study-fit.js' | relative_url }}"></script>
+<script defer src="{{ '/site/assets/js/study-ring.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
+{% include scripts.html %}
+</body>
+</html>

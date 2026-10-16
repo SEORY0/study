@@ -1,0 +1,23 @@
+---
+layout: null
+permalink: /sitemap.xml
+sitemap: false
+---
+{%- comment -%}
+  jekyll-sitemap's own list, with one change: a page's `date` stands in for
+  `last_modified_at`, so the notes (pages under studies/) keep their
+  lastmod. With this file in place the plugin writes only robots.txt.
+{%- endcomment -%}
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{%- assign sm_pages = site.html_pages | where_exp: "p", "p.sitemap != false" -%}
+{%- for p in sm_pages %}
+<url>
+<loc>{{ p.url | replace: '/index.html', '/' | absolute_url | xml_escape }}</loc>
+{%- assign sm_date = p.last_modified_at | default: p.date -%}
+{%- if sm_date %}
+<lastmod>{{ sm_date | date_to_xmlschema }}</lastmod>
+{%- endif %}
+</url>
+{%- endfor %}
+</urlset>
