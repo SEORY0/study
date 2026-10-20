@@ -59,6 +59,12 @@ AI 시대에서 나 자신을 학습시키기 위한 노트
 
 ---
 
+#### Algorithms
+
+- [알고리즘](https://seory0.github.io/study/algorithm/)
+
+---
+
 #### Deep Learning
 
 - [CNN의 합성곱](https://seory0.github.io/study/cnn/)
