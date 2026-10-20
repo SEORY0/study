@@ -56,6 +56,10 @@ subjects:
     area: cs
     name: 컴퓨터 네트워크
     en: Computer Networks
+  - id: Algorithms
+    area: cs
+    name: 알고리즘
+    en: Algorithms
   - id: Deep-Learning
     area: ai
     name: 딥러닝
